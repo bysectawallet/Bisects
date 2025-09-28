@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deposit Funds</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f4f5f7;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 400px;
+    width: 100%;
+    background: #fff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+    color: #0b274d;
+  }
+
+  .amount-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .amount-container span {
+    padding: 12px;
+    background: #eee;
+    border: 1px solid #ccc;
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+    font-size: 16px;
+  }
+
+  input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    border: 1px solid #ccc;
+    border-left: none;
+    font-size: 16px;
+  }
+
+  button {
+    padding: 12px 20px;
+    background: #0b274d;
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background: #133b73;
+  }
+
+  .wallet-container {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .wallet-address {
+    font-weight: bold;
+    font-size: 16px;
+    word-break: break-all;
+  }
+
+  .copy-btn {
+    padding: 6px 10px;
+    background: #0b274d;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .copy-btn:hover {
+    background: #133b73;
+  }
+
+  .confirmation {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 500;
+    color: #0b274d;
+  }
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(11,39,77,0.3);
+    border-top: 4px solid #0b274d;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-top: 10px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Deposit Funds</h2>
+
+  <div class="amount-container">
+    <span>$</span>
+    <input type="number" id="amount" placeholder="Enter amount" />
+  </div>
+
+  <button id="generateBtn">Generate Wallet</button>
+
+  <div class="wallet-container" style="display:none;" id="walletContainer">
+    <div class="wallet-address" id="walletAddress"></div>
+    <button class="copy-btn" id="copyBtn">Copy</button>
+  </div>
+
+  <div class="confirmation" id="confirmation" style="display:none;">
+    Waiting for confirmation
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<script>
+  const generateBtn = document.getElementById('generateBtn');
+  const walletAddress = document.getElementById('walletAddress');
+  const walletContainer = document.getElementById('walletContainer');
+  const confirmation = document.getElementById('confirmation');
+  const copyBtn = document.getElementById('copyBtn');
+
+  generateBtn.addEventListener('click', () => {
+    const amount = document.getElementById('amount').value.trim();
+    if (!amount || amount <= 0) {
+      alert('Please enter a valid amount.');
+      return;
+    }
+
+    // Show wallet address
+    walletAddress.textContent = '3Q96HDz8jRE1QNb43ToyrXvVad7QsPf8v3';
+    walletContainer.style.display = 'flex';
+
+    // Show confirmation/loading
+    confirmation.style.display = 'flex';
+  });
+
+  // Copy wallet address
+  copyBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(walletAddress.textContent)
+      .then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1500);
+      })
+      .catch(() => alert('Failed to copy.'));
+  });
+</script>
+
+</body>
+</html>
