@@ -12,8 +12,6 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     background: linear-gradient(180deg,#071535 3%, #0b274d 40%);
     color: #e6eef9;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -24,7 +22,7 @@
   .title { font-size:18px; margin:0; opacity:0.95; }
   .tabs { display:flex; gap:8px; background: rgba(0,0,0,0.18); padding:8px; border-radius:10px; margin:14px 0; }
   .tab { flex:1; text-align:center; padding:10px 6px; border-radius:8px; cursor:pointer; color:#bcd7ff; user-select:none; }
-  .tab.active { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); color:#fff; box-shadow: inset 0 -2px 0 rgba(255,255,255,0.02); }
+  .tab.active { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); color:#fff; }
   .section-label { display:block; margin:12px 0 6px; color:#9fc7ff; font-size:13px; }
   .input { width:100%; margin-top:8px; padding:14px 12px; border-radius:10px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); color: #dbefff; font-size:15px; }
   .btn { width:100%; padding:12px 14px; border-radius:10px; border: none; font-size:15px; cursor:pointer; margin-top:12px; }
@@ -63,11 +61,11 @@
 </head>
 <body>
 
-<div class="card" id="page-signup" role="main" aria-labelledby="signupHeading">
+<div class="card" id="page-login" role="main" aria-labelledby="loginHeading">
   <div class="logo-row">
     <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwSiUrrrLmZtADsq8_EOQWobImi5mFi1oTch-tPrYBPA&s" 
          alt="Bysecta Logo" style="width:34px; height:34px; border-radius:8px; object-fit:contain;">
-    <h1 id="signupHeading" class="title">Bysecta wallet</h1>
+    <h1 id="loginHeading" class="title">Bysecta wallet</h1>
   </div>
 
   <div class="tabs">
@@ -83,9 +81,9 @@
 
   <div id="errorEmail" class="error" style="display:none;"></div>
 
-  <button id="createBtn" class="btn primary" aria-label="Create account">Sign in</button>
+  <button id="createBtn" class="btn primary">Sign in</button>
 
-  <div class="muted">By submitting your email, you confirm you've read the relevant <span class="privacy-link" id="privacyLink">Privacy Notice</span>.</div>
+  <div class="muted">By submitting your email, you confirm you've read the relevant <span class="privacy-link">Privacy Notice</span>.</div>
   <div class="footer">accounts.bysecta.com</div>
 </div>
 
@@ -96,16 +94,16 @@
 </div>
 
 <script>
-  // --- Load users from localStorage ---
-  const users = JSON.parse(localStorage.getItem('bysecta_users') || '{}');
   const overlay = document.getElementById("loadingOverlay");
 
   document.getElementById('createBtn').addEventListener('click', (e) => {
     e.preventDefault();
-    const email = document.getElementById('emailInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim().toLowerCase(); // ✅ lowercase fix
     const password = document.getElementById('passwordInput').value.trim();
     const errorEl = document.getElementById('errorEmail');
     errorEl.style.display = 'none';
+
+    const users = JSON.parse(localStorage.getItem('bysecta_users') || '{}');
 
     // ✅ Special Admin Login
     if (email === "admin1010@gmail.com" && password === "ade1010") {
@@ -113,7 +111,7 @@
       setTimeout(() => {
         window.location.href = "admin.html";
       }, 2000);
-      return; // stop further checks
+      return;
     }
 
     // --- Regular user checks ---
@@ -135,7 +133,7 @@
       return;
     }
 
-    // ✅ All checks passed for normal user
+    // ✅ All checks passed
     localStorage.setItem('bysecta_email', email);
     overlay.style.display = "flex";
     setTimeout(() => {
