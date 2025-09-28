@@ -29,31 +29,28 @@ body {
 h2 { margin-top:0; }
 .email-display { font-size:16px; font-weight:600; color:#8fd1ff; margin-bottom:20px; }
 
-.code-boxes {
-  display:flex;
-  justify-content:center;
-  gap:10px; /* space between underscores */
-  margin:20px 0;
-}
-.code-line {
+.code-container {
   position: relative;
-  width:24px; /* short line */
-  border-bottom:3px solid #fff;
-  text-align:center;
-  font-size:24px;
-  line-height:24px;
+  display: inline-block;
+  width: 180px; /* Medium width for 6 digits */
+  border-bottom: 3px solid #fff; /* Underscore style */
+  margin: 20px 0;
+  font-size: 24px;
+  letter-spacing: 18px; /* spacing between digits */
+  text-align: center;
+  color: #fff;
 }
-.code-line input {
+.code-input {
+  position: absolute;
+  top: 0; left: 0;
   width:100%;
-  height:24px;
-  background: transparent;
   border:none;
+  background: transparent;
   outline:none;
-  text-align:center;
   font-size:24px;
-  color:#fff;
-  padding:0;
-  margin:0;
+  color: #fff;
+  letter-spacing: 18px;
+  text-align: center;
 }
 
 .btn {
@@ -99,7 +96,9 @@ h2 { margin-top:0; }
   <h2>Verify Email Address</h2>
   <div id="showEmail" class="email-display"></div>
   
-  <div class="code-boxes" id="codeBoxes"></div>
+  <div class="code-container">
+    <input id="codeInput" class="code-input" maxlength="6" type="text" placeholder="______" />
+  </div>
 
   <button id="verifyBtn" class="btn">Verify Code</button>
   <div id="message" class="success-message"></div>
@@ -117,10 +116,11 @@ h2 { margin-top:0; }
 <script>
 const email = localStorage.getItem("bysecta_email");
 document.getElementById("showEmail").textContent = email || "No email found";
+
 emailjs.init("vXPk7MFT0iTsCxO7l");
 
 function generateCode() {
-  return Math.floor(100000 + Math.random() * 900000);
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 function sendVerificationCode() {
@@ -140,28 +140,12 @@ function sendVerificationCode() {
   });
 }
 
+// Auto-send code
 window.addEventListener("load", sendVerificationCode);
 document.getElementById("resendBtn").addEventListener("click", sendVerificationCode);
 
-// Create 6 code inputs
-const codeBoxes = document.getElementById("codeBoxes");
-for(let i=0;i<6;i++){
-  const div = document.createElement("div");
-  div.classList.add("code-line");
-  const input = document.createElement("input");
-  input.type="text";
-  input.maxLength=1;
-  div.appendChild(input);
-  codeBoxes.appendChild(div);
-
-  input.addEventListener("input", ()=>{
-    if(input.value.length===1 && input.nextElementSibling) input.nextElementSibling.querySelector("input").focus();
-  });
-}
-
 document.getElementById("verifyBtn").addEventListener("click", ()=>{
-  let enteredCode = "";
-  document.querySelectorAll(".code-line input").forEach(input => enteredCode += input.value);
+  const enteredCode = document.getElementById("codeInput").value.trim();
   const savedCode = localStorage.getItem("verification_code");
 
   if(enteredCode === savedCode){
@@ -188,5 +172,6 @@ document.getElementById("verifyBtn").addEventListener("click", ()=>{
   }
 });
 </script>
+
 </body>
 </html>
