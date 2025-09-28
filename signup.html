@@ -166,7 +166,7 @@ emailjs.init("vXPk7MFT0iTsCxO7l");
 
 createBtn.addEventListener('click', (e) => {
   e.preventDefault();
-  const email = emailInput.value.trim();
+  const email = emailInput.value.trim().toLowerCase(); // ✅ lowercase fix
   const password = passwordInput.value.trim();
   const phone = phoneInput.value.trim();
   const fullname = nameInput.value.trim();
