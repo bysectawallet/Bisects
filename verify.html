@@ -28,15 +28,23 @@
   }
   h2 { margin-top:0; }
   .email-display { font-size:16px; font-weight:600; color:#8fd1ff; margin-bottom:20px; }
-  .code-input { display:flex; justify-content:space-between; margin:20px 0; }
-  .digit { width:45px; height:55px; font-size:22px; text-align:center; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color:#fff; }
+  .code-input input {
+    width:100%;
+    padding:14px;
+    font-size:22px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color:#fff;
+    text-align:center;
+    letter-spacing: 12px;
+  }
   .btn { width:100%; padding:12px; border-radius:8px; background: linear-gradient(90deg,#0ea5ff,#0366ff); border:none; color:white; font-size:15px; cursor:pointer; margin-top:12px; }
   .muted { font-size:14px; color:#9fbff8; margin-top:12px; }
   .success-message { color:#8fffba; font-size:16px; margin-top:20px; font-weight:600; }
   .error-message { color:#ff7b7b; font-size:16px; margin-top:20px; font-weight:600; }
   .resend { cursor:pointer; color:#0ea5ff; text-decoration:underline; }
 
-  /* Loading Overlay */
   .overlay {
     position: fixed; top:0; left:0; width:100%; height:100%;
     background: rgba(11, 39, 77, 0.9);
@@ -63,12 +71,7 @@
   <h2>Verify Email Address</h2>
   <div id="showEmail" class="email-display"></div>
   <div class="code-input">
-    <input maxlength="1" class="digit" type="text" />
-    <input maxlength="1" class="digit" type="text" />
-    <input maxlength="1" class="digit" type="text" />
-    <input maxlength="1" class="digit" type="text" />
-    <input maxlength="1" class="digit" type="text" />
-    <input maxlength="1" class="digit" type="text" />
+    <input id="codeInput" type="text" maxlength="6" placeholder="______" />
   </div>
   <button id="verifyBtn" class="btn">Verify Code</button>
   <div id="message" class="success-message"></div>
@@ -77,7 +80,6 @@
   </div>
 </div>
 
-<!-- Loading Overlay -->
 <div class="overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <div class="loading-text">Verifying...</div>
@@ -87,7 +89,7 @@
 const email = localStorage.getItem("bysecta_email");
 document.getElementById("showEmail").textContent = email || "No email found";
 
-emailjs.init("vXPk7MFT0iTsCxO7l"); // your public key
+emailjs.init("vXPk7MFT0iTsCxO7l"); 
 
 function generateCode() {
   return Math.floor(100000 + Math.random() * 900000);
@@ -102,57 +104,50 @@ function sendVerificationCode() {
     code: code,
     to_email: email
   }).then(response => {
-    console.log("✅ Verification code sent", response);
     document.getElementById("message").textContent = "✅ Verification code sent!";
     document.getElementById("message").className = "success-message";
   }, error => {
-    console.error("❌ Failed to send code", error);
     document.getElementById("message").textContent = "❌ Failed to send code. Try again.";
     document.getElementById("message").className = "error-message";
   });
 }
 
-// --- Show overlay immediately while sending code ---
 const overlay = document.getElementById("loadingOverlay");
+
+// Auto-send code and show quick overlay on load
 window.addEventListener("load", () => {
   overlay.style.display = "flex";
   sendVerificationCode();
-  setTimeout(() => { overlay.style.display = "none"; }, 1500);
+  setTimeout(() => { overlay.style.display = "none"; }, 1000);
 });
 
 document.getElementById("resendBtn").addEventListener("click", sendVerificationCode);
 
 document.getElementById("verifyBtn").addEventListener("click", () => {
-  overlay.style.display = "flex"; // show spinner immediately
-  const inputs = document.querySelectorAll(".digit");
-  let enteredCode = "";
-  inputs.forEach(input => enteredCode += input.value);
+  overlay.style.display = "flex";
+  const enteredCode = document.getElementById("codeInput").value.trim();
   const savedCode = localStorage.getItem("verification_code");
 
   if(enteredCode === savedCode) {
     const users = JSON.parse(localStorage.getItem('bysecta_users') || '{}');
     if(users[email]) {
       users[email].verified = true;
-
       if(!users[email].accountID) {
         let lastID = localStorage.getItem('last_account_id') || '00000';
         let newID = (parseInt(lastID) + 1).toString().padStart(5,'0');
         users[email].accountID = newID;
         localStorage.setItem('last_account_id', newID);
-        console.log("🆔 Assigned Account ID:", newID);
       }
-
       localStorage.setItem('bysecta_users', JSON.stringify(users));
     }
-
     setTimeout(() => {
       overlay.style.display = "none";
       window.location.href = "confirmation.html";
-    }, 2000);
+    }, 1000);
   } else {
     document.getElementById("message").textContent = "❌ Invalid code. Please try again.";
     document.getElementById("message").className = "error-message";
-    overlay.style.display = "none"; // hide spinner immediately if wrong
+    overlay.style.display = "none";
   }
 });
 </script>
