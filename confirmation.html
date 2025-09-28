@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Confirmed</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0b274d;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .container {
+      background: #071535;
+      padding: 40px;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 90%;
+    }
+    h1 {
+      margin-bottom: 15px;
+    }
+    p {
+      color: #c7d7f5;
+      margin-bottom: 20px;
+    }
+    a.button {
+      display: inline-block;
+      background: #0ea5ff;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎉 Congratulations!</h1>
+    <p>Your account has been successfully confirmed.</p>
+    <a href="login.html" class="button">Go to Bysecta.com</a>
+  </div>
+
+  <script>
+    // ✅ Mark user as verified on page load
+    const email = localStorage.getItem('bysecta_email');
+    const users = JSON.parse(localStorage.getItem('bysecta_users') || '{}');
+    if(email && users[email]) {
+      users[email].verified = true;
+      localStorage.setItem('bysecta_users', JSON.stringify(users));
+      console.log('User ${email} is now verified.');
+    }
+  </script>
+</body>
+</html>
