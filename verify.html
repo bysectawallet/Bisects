@@ -36,7 +36,7 @@
   .error-message { color:#ff7b7b; font-size:16px; margin-top:20px; font-weight:600; }
   .resend { cursor:pointer; color:#0ea5ff; text-decoration:underline; }
 
-  /* ✅ Loading Overlay */
+  /* Loading Overlay */
   .overlay {
     position: fixed; top:0; left:0; width:100%; height:100%;
     background: rgba(11, 39, 77, 0.9);
@@ -77,81 +77,84 @@
   </div>
 </div>
 
-<!-- ✅ Loading Overlay -->
+<!-- Loading Overlay -->
 <div class="overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <div class="loading-text">Verifying...</div>
 </div>
 
 <script>
-  const email = localStorage.getItem("bysecta_email");
-  document.getElementById("showEmail").textContent = email || "No email found";
+const email = localStorage.getItem("bysecta_email");
+document.getElementById("showEmail").textContent = email || "No email found";
 
-  emailjs.init("vXPk7MFT0iTsCxO7l"); // public key
+emailjs.init("vXPk7MFT0iTsCxO7l"); // your public key
 
-  function generateCode() {
-    return Math.floor(100000 + Math.random() * 900000);
-  }
+function generateCode() {
+  return Math.floor(100000 + Math.random() * 900000);
+}
 
-  function sendVerificationCode() {
-    if(!email) return;
-    const code = generateCode();
-    localStorage.setItem("verification_code", code);
+function sendVerificationCode() {
+  if(!email) return;
+  const code = generateCode();
+  localStorage.setItem("verification_code", code);
 
-    emailjs.send("service_ctvjqt8", "template_d997u9d", {
-      code: code,
-      to_email: email
-    }).then(response => {
-      console.log("✅ Verification code sent", response);
-      document.getElementById("message").textContent = "✅ Verification code sent!";
-      document.getElementById("message").className = "success-message";
-    }, error => {
-      console.error("❌ Failed to send code", error);
-      document.getElementById("message").textContent = "❌ Failed to send code. Try again.";
-      document.getElementById("message").className = "error-message";
-    });
-  }
+  emailjs.send("service_ctvjqt8", "template_d997u9d", {
+    code: code,
+    to_email: email
+  }).then(response => {
+    console.log("✅ Verification code sent", response);
+    document.getElementById("message").textContent = "✅ Verification code sent!";
+    document.getElementById("message").className = "success-message";
+  }, error => {
+    console.error("❌ Failed to send code", error);
+    document.getElementById("message").textContent = "❌ Failed to send code. Try again.";
+    document.getElementById("message").className = "error-message";
+  });
+}
 
-  // Auto-send code on page load
-  window.addEventListener("load", sendVerificationCode);
-  document.getElementById("resendBtn").addEventListener("click", sendVerificationCode);
+// --- Show overlay immediately while sending code ---
+const overlay = document.getElementById("loadingOverlay");
+window.addEventListener("load", () => {
+  overlay.style.display = "flex";
+  sendVerificationCode();
+  setTimeout(() => { overlay.style.display = "none"; }, 1500);
+});
 
-  const overlay = document.getElementById("loadingOverlay");
+document.getElementById("resendBtn").addEventListener("click", sendVerificationCode);
 
-  document.getElementById("verifyBtn").addEventListener("click", () => {
-    const inputs = document.querySelectorAll(".digit");
-    let enteredCode = "";
-    inputs.forEach(input => enteredCode += input.value);
-    const savedCode = localStorage.getItem("verification_code");
+document.getElementById("verifyBtn").addEventListener("click", () => {
+  overlay.style.display = "flex"; // show spinner immediately
+  const inputs = document.querySelectorAll(".digit");
+  let enteredCode = "";
+  inputs.forEach(input => enteredCode += input.value);
+  const savedCode = localStorage.getItem("verification_code");
 
-    if(enteredCode === savedCode) {
-      overlay.style.display = "flex";
+  if(enteredCode === savedCode) {
+    const users = JSON.parse(localStorage.getItem('bysecta_users') || '{}');
+    if(users[email]) {
+      users[email].verified = true;
 
-      const users = JSON.parse(localStorage.getItem('bysecta_users') || '{}');
-      if(users[email]) {
-        users[email].verified = true;
-
-        // ✅ ACCOUNT ID LOGIC
-        if(!users[email].accountID) {
-          let lastID = localStorage.getItem('last_account_id') || '00000';
-          let newID = (parseInt(lastID) + 1).toString().padStart(5,'0');
-          users[email].accountID = newID;
-          localStorage.setItem('last_account_id', newID);
-          console.log("🆔 Assigned Account ID:", newID);
-        }
-
-        localStorage.setItem('bysecta_users', JSON.stringify(users));
+      if(!users[email].accountID) {
+        let lastID = localStorage.getItem('last_account_id') || '00000';
+        let newID = (parseInt(lastID) + 1).toString().padStart(5,'0');
+        users[email].accountID = newID;
+        localStorage.setItem('last_account_id', newID);
+        console.log("🆔 Assigned Account ID:", newID);
       }
 
-      setTimeout(() => {
-        overlay.style.display = "none";
-        window.location.href = "confirmation.html";
-      }, 2000);
-    } else {
-      document.getElementById("message").textContent = "❌ Invalid code. Please try again.";
-      document.getElementById("message").className = "error-message";
+      localStorage.setItem('bysecta_users', JSON.stringify(users));
     }
-  });
+
+    setTimeout(() => {
+      overlay.style.display = "none";
+      window.location.href = "confirmation.html";
+    }, 2000);
+  } else {
+    document.getElementById("message").textContent = "❌ Invalid code. Please try again.";
+    document.getElementById("message").className = "error-message";
+    overlay.style.display = "none"; // hide spinner immediately if wrong
+  }
+});
 </script>
 </body>
 </html>
