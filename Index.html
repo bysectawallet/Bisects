@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome - Bysecta Wallet</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #071535 3%, #0b274d 40%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: #e6eef9;
+    }
+    .logo {
+      width: 100px;
+      height: 100px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      object-fit: contain;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    h1 {
+      font-size: 28px;
+      margin: 0;
+      text-align: center;
+      color: #fff;
+    }
+    p {
+      font-size: 16px;
+      margin-top: 10px;
+      color: #9fc7ff;
+    }
+    .btn {
+      margin-top: 30px;
+      padding: 12px 24px;
+      background: linear-gradient(90deg,#0ea5ff,#0366ff);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    /* ✅ Loading Overlay */
+    .overlay {
+      position: fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background: rgba(11, 39, 77, 0.95);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      flex-direction:column;
+      z-index:9999;
+    }
+    .spinner {
+      width:50px; height:50px;
+      border:4px solid rgba(255,255,255,0.3);
+      border-top:4px solid #0ea5ff;
+      border-radius:50%;
+      animation: spin 1s linear infinite;
+      margin-bottom:15px;
+    }
+    .loading-text {
+      font-size:18px;
+      color:#fff;
+    }
+    @keyframes spin { 
+      0%{transform:rotate(0deg);} 
+      100%{transform:rotate(360deg);} 
+    }
+  </style>
+</head>
+<body>
+
+  <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwSiUrrrLmZtADsq8_EOQWobImi5mFi1oTch-tPrYBPA&s" 
+       alt="Bysecta Logo" 
+       class="logo">
+
+  <h1>Welcome to Bysectawallet.com</h1>
+  <p>Your trusted crypto wallet solution</p>
+
+  <button class="btn" onclick="startApp()">Get Started</button>
+
+  <!-- Loading Overlay -->
+  <div class="overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading...</div>
+  </div>
+
+  <script>
+    function startApp() {
+      const overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      setTimeout(() => {
+        window.location.href = "signup.html";
+      }, 2000); // 2 sec loading before redirect
+    }
+  </script>
+
+</body>
+</html>
