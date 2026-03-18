@@ -6,7 +6,6 @@
 <title>Wallet Bysecta</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css"/>
 <style>
-  /* ✅ Fix intl-tel-input country dropdown colors */
 .iti__country-list { background-color: #fff !important; color: #000 !important; }
 .iti__country:hover { background-color: #f0f0f0 !important; }
 .iti__selected-dial-code { color: #e6eef9 !important; }
@@ -37,7 +36,6 @@ label.section-label { display:block; margin:12px 0 6px; color:#9fc7ff; font-size
 .footer { margin-top:14px; font-size:13px; color:#94bfff; text-align:center; }
 .error { color:#ffb4b4; font-size:13px; margin-top:8px; }
 
-/* ✅ Loading Overlay */
 .overlay {
   position: fixed;
   top:0; left:0;
@@ -104,7 +102,6 @@ label.section-label { display:block; margin:12px 0 6px; color:#9fc7ff; font-size
   <div class="footer">accounts.bysecta.com</div>
 </div>
 
-<!-- ✅ Loading Overlay -->
 <div class="overlay" id="loadingOverlay">
   <div class="spinner"></div>
   <div class="loading-text">Creating your account...</div>
@@ -121,7 +118,6 @@ const nameInput = document.getElementById('namelInput');
 const promoCheck = document.getElementById('promoCheck');
 const overlay = document.getElementById("loadingOverlay");
 
-// Initialize intl-tel-input
 const iti = window.intlTelInput(phoneInput, {
   initialCountry: "auto",
   preferredCountries: ["us","gb","ca"],
@@ -134,7 +130,6 @@ const iti = window.intlTelInput(phoneInput, {
   utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
 });
 
-// Format phone number
 phoneInput.addEventListener('input', (e) => {
   let value = e.target.value.replace(/\D/g,'').slice(0,10);
   if(value.length > 6) value = value.replace(/(\d{3})(\d{3})(\d{1,4})/, '$1-$2-$3');
@@ -143,7 +138,9 @@ phoneInput.addEventListener('input', (e) => {
 });
 
 function isValidName(name) { return /^[A-Za-z ]+$/.test(name); }
-function isValidPassword(pass) { return /^[A-Za-z]{6,}$/.test(pass); }
+
+/* ✅ UPDATED PASSWORD VALIDATION */
+function isValidPassword(pass) { return /^[A-Za-z0-9!@#$%^&*()_+=-]{6,}$/.test(pass); }
 
 function checkForm() {
   if (emailInput.value.trim() !== "" &&
@@ -161,12 +158,11 @@ promoCheck.addEventListener("click", () => {
   promoCheck.textContent = promoCheck.classList.contains("checked") ? "✓" : "";
 });
 
-// Initialize EmailJS
 emailjs.init("vXPk7MFT0iTsCxO7l");
 
 createBtn.addEventListener('click', (e) => {
   e.preventDefault();
-  const email = emailInput.value.trim().toLowerCase(); // ✅ lowercase fix
+  const email = emailInput.value.trim().toLowerCase();
   const password = passwordInput.value.trim();
   const phone = phoneInput.value.trim();
   const fullname = nameInput.value.trim();
@@ -189,7 +185,6 @@ createBtn.addEventListener('click', (e) => {
     code: verificationCode
   });
 
-  // ✅ Show loading, then redirect
   overlay.style.display = "flex";
   setTimeout(() => {
     window.location.href = "verify.html";
