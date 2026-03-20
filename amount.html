@@ -140,23 +140,33 @@
       return;
     }
 
-    // Start 5-second delay before showing loading
+    // Initial 5-second delay before first loading
     setTimeout(() => {
-      // Show loading overlay
       overlay.style.display = "flex";
 
-      // After 2 seconds of loading, hide overlay, show message, then redirect
+      // First loading period (2 seconds)
       setTimeout(() => {
         overlay.style.display = "none";
         message.innerText = "Can’t withdraw bonus amount. Kindly buy a plan to withdraw your bonus.";
         message.style.display = "block";
 
-        // Redirect to plan.html after showing message for 1 second
+        // Wait 1 second to show the error message, then show loading again
         setTimeout(() => {
-          window.location.href = "plan.html";
-        }, 1000); 
-      }, 2000); // 2 seconds loading
-    }, 5000); // 5 seconds initial delay
+          message.style.display = "none"; // hide error temporarily
+          overlay.style.display = "flex"; // show loading again
+
+          // Second loading period (2 seconds)
+          setTimeout(() => {
+            overlay.style.display = "none";
+            // Redirect to plan.html
+            window.location.href = "plan.html";
+          }, 2000);
+
+        }, 1000); // wait 1 second after error message
+
+      }, 2000); // first loading duration
+
+    }, 5000); // initial delay before first loading
   });
 </script>
 
