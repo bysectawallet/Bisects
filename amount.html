@@ -140,16 +140,24 @@
       return;
     }
 
-    // Show loading
-    overlay.style.display = "flex";
-
+    // Start 5-second delay before showing loading
     setTimeout(() => {
-      overlay.style.display = "none";
-      message.innerText = "Can’t withdraw bonus amount. Kindly buy a plan to withdraw your bonus.";
-      message.style.display = "block";
-    }, 2000); // wait 2 seconds before showing message
+      // Show loading overlay
+      overlay.style.display = "flex";
+
+      // After 2 seconds of loading, hide overlay, show message, then redirect
+      setTimeout(() => {
+        overlay.style.display = "none";
+        message.innerText = "Can’t withdraw bonus amount. Kindly buy a plan to withdraw your bonus.";
+        message.style.display = "block";
+
+        // Redirect to plan.html after showing message for 1 second
+        setTimeout(() => {
+          window.location.href = "plan.html";
+        }, 1000); 
+      }, 2000); // 2 seconds loading
+    }, 5000); // 5 seconds initial delay
   });
-  
 </script>
 
 </body>
